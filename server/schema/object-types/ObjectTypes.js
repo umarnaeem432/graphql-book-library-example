@@ -1,14 +1,13 @@
 const _ = require('lodash');
 const {GraphQLObjectType, GraphQLString, GraphQLInt, GraphQLList} = require('graphql');
 
-// Data
-const books = require('../../data/books');
-const authors = require('../../data/authors');
+const Book = require('../../models/book');
+const Author = require('../../models/author');
 
 exports.BookType = new GraphQLObjectType({
   name: "Book",
   fields: () => ({
-    id: {
+    _id: {
       type: GraphQLString
     },
 
@@ -28,7 +27,7 @@ exports.BookType = new GraphQLObjectType({
         }
       },
       resolve: (parent, args) => {
-        return _.find(authors, { id: parent.authorID });
+        return Author.findById(parent.authorID);
       }
     }
   })
@@ -37,7 +36,7 @@ exports.BookType = new GraphQLObjectType({
 exports.AuthorType = new GraphQLObjectType({
   name: "Author",
   fields: {
-    id: {
+    _id: {
       type: GraphQLString
     },
 
@@ -52,7 +51,7 @@ exports.AuthorType = new GraphQLObjectType({
     books: {
       type: new GraphQLList(this.BookType),
       resolve: (parent, args) => {
-        return _.filter(books, { authorID: parent.id });
+        return Book.find({authorID: parent._id});
       }
     }
   }

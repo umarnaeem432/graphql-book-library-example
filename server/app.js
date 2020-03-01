@@ -1,16 +1,23 @@
 const express = require('express');
 const graphqlHTTP = require('express-graphql'); // middleware to interact with graphql
 const schema = require('./schema/schema');
-
-const app = express();
+const mongoose = require('mongoose');
 
 const PORT = process.env.PORT | 3000;
+
+const app = express();
 
 app.use('/graphql', graphqlHTTP({
     schema,
     graphiql: true,
 }));
 
-app.listen(PORT, () => {
-    console.log(`Server Started at port: ${PORT}`);
-})
+mongoose.connect('mongodb://localhost:27017/gq_books_library?retryWrites=true&w=majority', (err => {
+    if (!err) {
+        app.listen(PORT, () => {
+            console.log(`Server Started at port: ${PORT}`);
+        })
+    } else {
+        throw err;
+    } 
+}));
