@@ -5,7 +5,13 @@ const _ = require("lodash");
 const books = require('../data/books');
 const authors = require('../data/authors');
 
-const { GraphQLObjectType, GraphQLString, GraphQLInt, GraphQLSchema } = graphql;
+const { 
+    GraphQLObjectType, 
+    GraphQLString, 
+    GraphQLInt, 
+    GraphQLSchema,
+    GraphQLList,
+} = graphql;
 
 const BookType = new GraphQLObjectType({
   name: "Book",
@@ -49,6 +55,13 @@ const AuthorType = new GraphQLObjectType({
 
     age: {
         type: GraphQLInt,
+    },
+
+    books: {
+        type: new GraphQLList(BookType),
+        resolve: (parent, args) => {
+            return _.filter(books, {authorID: parent.id});
+        }
     }
   }
 });
